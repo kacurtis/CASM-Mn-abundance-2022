@@ -3,34 +3,6 @@
 library(nimble)
 library(nimbleEcology)
 
-# SCR0pjk.1Dasymm.code <- nimbleCode({
-#   for (j in 1:J) {
-#     for (k in 1:K) {
-#       p0[j,k] ~ dunif(0, 1)      # baseline encounter probability
-#     }
-#   }
-#   beta1 ~ dunif(0,1)
-#   beta2 <- 1 - beta1
-#   sigma ~ dunif(0,50)   # scale parameter of encounter function
-#   psi ~ dunif(0, 1)     # DA parameter: E(N) = M*psi
-#   
-#   for(i in 1:M) {
-#     z[i] ~ dbern(psi)  # Is individual real?
-#     s[i] ~ dunif(ylim[1], ylim[2]) # 1D spatial coordinate
-#     # dist between activity center and trap
-#     d[i,1:J] <- abs(s[i] - X[1:J])
-#     for(j in 1:J) {
-#       north[i,j] <- s[i] <= X[j] 
-#       p[i,j,1:K] <- beta1 * p0[j,1:K] * exp(-d[i,j]^2/(2*sigma^2)) + beta2 * p0[j,1:K] * north[i,j]  # capture prob at trap j
-#       y[i,j,1:K] ~ dOcc_v(z[i], p[i,j,1:K], len = K)
-#     }
-#   }
-#   
-#   N <- sum(z[1:M])                         # realized abundance
-#   EN <- psi*M
-#   #D <- N/area                              # realized density
-# })
-
 SCR0pjk.1D.code <- nimbleCode({
   for (j in 1:J) {
     for (k in 1:K) {
@@ -101,7 +73,7 @@ SCR0pjk.1D.fitfun <- function(data, M, rand = NULL, ni = 2000, nb = 1000, cm.scr
       conf.scr01d <- configureMCMC(m.scr01d, monitors = c("p0", "sigma", "N"), thin=1,
                                    monitors2=c("s","z","p0","sigma","psi"), thin2=25)
       conf.scr01d$removeSamplers(c("psi","sigma")) 
-      conf.scr01d$addSampler(target = c("psi","sigma"), type = 'AF_slice')   # 'crossLevel' also interesting. Is this actually chaning anything, since psi is not parent node?
+      conf.scr01d$addSampler(target = c("psi","sigma"), type = 'AF_slice')  
     }
     mcmc.scr01d <- buildMCMC(conf.scr01d)
     cmcmc.scr01d <- compileNimble(mcmc.scr01d, project=m.scr01d)

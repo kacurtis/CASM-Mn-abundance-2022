@@ -70,13 +70,6 @@ sight.camsm <- sight %>%
 # subset without SMex
 sight.cam <- sight.camsm %>% filter(loc %in% 10:17) 
 
-# create non-spatial annualized histories
-ch.camsm <- array2binom(unclass(with(sight.camsm, table(id, occ))))
-ch.cam <- array2binom(unclass(with(sight.cam, table(id, occ))))
-## drop first three occasions
-ch.camsm.96 <- array2binom(unclass(with(sight.camsm %>% filter(occ >= 1996), table(id, occ))))
-ch.cam.96 <- array2binom(unclass(with(sight.cam %>% filter(occ >= 1996), table(id, occ))))
-
 # create spatial annualized capture histories
 ## trap information
 traplocs <- sort(unique(sight.camsm$traplat))
